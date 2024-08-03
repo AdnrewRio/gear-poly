@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Image1 from "../../../../../public/assets/images/sanpham1.webp";
 
 const Cart = ({ cartItems, total }) => {
   return (
@@ -12,7 +11,7 @@ const Cart = ({ cartItems, total }) => {
               <img
                 height="60px"
                 width="60px"
-                src={Image1}
+                
                 className="d-block"
                 alt=""
               />
