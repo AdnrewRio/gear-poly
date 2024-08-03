@@ -24,6 +24,7 @@ import Kho from "./components/pages/Admin/warehouse/kho";
 import Qluser from "./components/pages/Admin/users/qltkuser";
 import ThongKeTongChiTieu from "./components/pages/Admin/statistics/totalnam";
 import Product from "./components/pages/Admin/products/product";
+import ProductForm from "./components/pages/Admin/products/productForm";
 import Categoties from "./components/pages/Admin/categories/categories";
 
 function App() {
@@ -45,7 +46,9 @@ function App() {
         <Route path="/thongke" element={<ThongKeTongChiTieu />} />
         <Route path="/ProductDetail" element={<ProductDetail />} />
         <Route path="/Cart" element={<Cart />} />
-        <Route path="/product" element={<Product />} />
+        <Route path="/products" element={<Product />} />
+        <Route path="/productForm" element={<ProductForm />} />
+        <Route path="/productForm/:id" element={<ProductForm />} />
         <Route path="/categories" element={<Categoties />} />
       </Route>
     )

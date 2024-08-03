@@ -1,6 +1,4 @@
-import React from "react";
-import image from "../../../../../public/assets/images/image.png";
-import image1 from "../../../../../public/assets/images/sanpham1.webp";
+import React from "react";  
 
 const Index = ({
   categories = [],
@@ -187,7 +185,7 @@ const Index = ({
           <div className="carousel-inner ">
             <div className="carousel-item active">
               <img
-                src={image}
+                
                 className="d-block w-100"
                 alt="Slide 1"
                 width="600px"
@@ -299,7 +297,7 @@ const Index = ({
         <div className="container">
           <div className="row">
             <div className="card m-3" style={{ width: "18rem" }}>
-              <img src={image1} className="card-img-top" alt="Example" />
+              <img  className="card-img-top" alt="Example" />
               <div className="card-body">
                 <h5 className="card-title">Sản phẩm 1</h5>
                 <p className="card-text">Mô tả sản phẩm</p>
@@ -310,7 +308,7 @@ const Index = ({
             </div>
 
             <div className="card m-3" style={{ width: "18rem" }}>
-              <img src={image1} className="card-img-top" alt="Example" />
+              <img  className="card-img-top" alt="Example" />
               <div className="card-body">
                 <h5 className="card-title">Sản phẩm 2</h5>
                 <p className="card-text">Mô tả sản phẩm</p>
@@ -321,7 +319,7 @@ const Index = ({
             </div>
 
             <div className="card m-3" style={{ width: "18rem" }}>
-              <img src={image1} className="card-img-top" alt="Example" />
+              <img  className="card-img-top" alt="Example" />
               <div className="card-body">
                 <h5 className="card-title">Sản phẩm 3</h5>
                 <p className="card-text">Mô tả sản phẩm</p>
@@ -332,7 +330,7 @@ const Index = ({
             </div>
 
             <div className="card m-3" style={{ width: "18rem" }}>
-              <img src={image1} className="card-img-top" alt="Example" />
+              <img  className="card-img-top" alt="Example" />
               <div className="card-body">
                 <h5 className="card-title">Sản phẩm 4</h5>
                 <p className="card-text">Mô tả sản phẩm</p>
@@ -345,7 +343,7 @@ const Index = ({
 
           <div className="row mt-2">
             <div className="card m-3" style={{ width: "18rem" }}>
-              <img src={image1} className="card-img-top" alt="Example" />
+              <img  className="card-img-top" alt="Example" />
               <div className="card-body">
                 <h5 className="card-title">Sản phẩm 5</h5>
                 <p className="card-text">Mô tả sản phẩm</p>
@@ -356,7 +354,7 @@ const Index = ({
             </div>
 
             <div className="card m-3" style={{ width: "18rem" }}>
-              <img src={image1} className="card-img-top" alt="Example" />
+              <img  className="card-img-top" alt="Example" />
               <div className="card-body">
                 <h5 className="card-title">Sản phẩm 6</h5>
                 <p className="card-text">Mô tả sản phẩm</p>
@@ -367,7 +365,7 @@ const Index = ({
             </div>
 
             <div className="card m-3" style={{ width: "18rem" }}>
-              <img src={image1} className="card-img-top" alt="Example" />
+              <img  className="card-img-top" alt="Example" />
               <div className="card-body">
                 <h5 className="card-title">Sản phẩm 7</h5>
                 <p className="card-text">Mô tả sản phẩm</p>
@@ -378,7 +376,7 @@ const Index = ({
             </div>
 
             <div className="card m-3" style={{ width: "18rem" }}>
-              <img src={image1} className="card-img-top" alt="Example" />
+              <img  className="card-img-top" alt="Example" />
               <div className="card-body">
                 <h5 className="card-title">Sản phẩm 8</h5>
                 <p className="card-text">Mô tả sản phẩm</p>

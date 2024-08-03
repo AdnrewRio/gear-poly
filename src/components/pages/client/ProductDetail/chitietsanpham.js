@@ -1,13 +1,12 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
-import image1 from '../images/sanpham1.webp';
 const ProductDetail = ({ productID }) => {
   return (
     <div className="container">
       <form action="/user/chitiet" method="post" encType="multipart/form-data">
         <div className="row mt-3">
           <div className="col-5">
-          <img src={image1} className="card-img-top" alt="Example" />
+          <img className="card-img-top" alt="Example" />
           </div>
           <div className="col-7">
             <h3></h3>
