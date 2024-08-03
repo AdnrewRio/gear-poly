@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React from "react";
+=======
+import React from "react";  
+>>>>>>> eeaf03624a3408033b9cbad4af9586fea923a90e
 
 const Index = ({
   categories = [],
@@ -185,6 +189,10 @@ const Index = ({
           <div className="carousel-inner ">
             <div className="carousel-item active">
               <img
+<<<<<<< HEAD
+=======
+                
+>>>>>>> eeaf03624a3408033b9cbad4af9586fea923a90e
                 className="d-block w-100"
                 alt="Slide 1"
                 width="600px"
