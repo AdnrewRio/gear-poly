@@ -22,43 +22,10 @@ import Kho from "./components/pages/Admin/warehouse/kho";
 import Qluser from "./components/pages/Admin/users/qltkuser";
 import ThongKeTongChiTieu from "./components/pages/Admin/statistics/totalnam";
 import Product from "./components/pages/Admin/products/product";
-<<<<<<< HEAD
 import ProductFrom from "./components/pages/Admin/products/productForm";
 import Categoties from "./components/pages/Admin/categories/categories";
 
 function App() {
-=======
-import ProductForm from "./components/pages/Admin/products/productForm";
-import Categoties from "./components/pages/Admin/categories/categories";
-
-function App() {
-  const router = createBrowserRouter(
-    createRoutesFromElements(
-      <Route>
-        {/*  */}
-        <Route path="/" element={<div></div>} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/changepass" element={<ChangePassword />} />
-        {/*  */}
-        <Route path="/index" element={<Index />} />
-        <Route path="/laphoadon" element={<Laphoadon />} />
-        <Route path="/ttnguoidung" element={<TTngdung />} />
-        <Route path="/chitiethoadon" element={<Chitiethoadon />} />
-        <Route path="/kho" element={<Kho />} />
-        <Route path="/quanlyuser" element={<Qluser />} />
-        <Route path="/thongke" element={<ThongKeTongChiTieu />} />
-        <Route path="/ProductDetail" element={<ProductDetail />} />
-        <Route path="/Cart" element={<Cart />} />
-        <Route path="/products" element={<Product />} />
-        <Route path="/productForm" element={<ProductForm />} />
-        <Route path="/productForm/:id" element={<ProductForm />} />
-        <Route path="/categories" element={<Categoties />} />
-      </Route>
-    )
-  );
-
->>>>>>> eeaf03624a3408033b9cbad4af9586fea923a90e
   return (
     <Router>
       <div>

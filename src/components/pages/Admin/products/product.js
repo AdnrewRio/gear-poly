@@ -19,13 +19,8 @@ const Product = () => {
           axios.get("http://localhost:8080/api/categories"),
         ]);
     
-<<<<<<< HEAD
         console.log("Products:", productResponse.data); // Xem dữ liệu sản phẩm
         console.log("Categories:", categoryResponse.data); // Xem dữ liệu danh mục
-=======
-        console.log("Products:", productResponse.data); // Debugging line
-        console.log("Categories:", categoryResponse.data); // Debugging line
->>>>>>> eeaf03624a3408033b9cbad4af9586fea923a90e
     
         const dataWithProducts = productResponse.data.map((product) => ({
           id: product.id,
@@ -34,26 +29,15 @@ const Product = () => {
           soLuong: product.soLuong,
           description: product.description,
           hien: product.hien,
-<<<<<<< HEAD
           ImgURL: product.image,
           categories_id: product.categories_id
         }));
-=======
-          ImgURL: product.id,
-          categories_id: product.id
-        }));
-    
->>>>>>> eeaf03624a3408033b9cbad4af9586fea923a90e
         setProducts(dataWithProducts);
         setCategories(categoryResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-<<<<<<< HEAD
-=======
-
->>>>>>> eeaf03624a3408033b9cbad4af9586fea923a90e
     fetchData();
   }, []);
 
@@ -101,8 +85,8 @@ const Product = () => {
 
   return (
     <main className="container mt-5">
-      <div className="row">
-        <div className="col-md-7 mb-4">
+      
+        <div className=" mb-4">
           <form className="d-flex mb-4" action="/searchProd" method="get">
             <input
               className="form-control me-2"
@@ -129,13 +113,7 @@ const Product = () => {
             </button>
           </form>
           <div className="mb-3">
-<<<<<<< HEAD
-            <a className="btn btn-success me-2" href={`/admin/productsForm`}>
-=======
-            <a className="btn btn-success me-2"
-              href={`/admin/productsForm`}
-            >
->>>>>>> eeaf03624a3408033b9cbad4af9586fea923a90e
+            <a className="btn btn-success me-2" onClick={handleAddClick}>
               Thêm sản phẩm mới
             </a>
             <a className="btn btn-primary me-2" href="/products-hidden">
@@ -146,15 +124,7 @@ const Product = () => {
             </a>
             <br />
             <br />
-<<<<<<< HEAD
             <form action="/search-by-category" method="get" className="d-inline">
-=======
-            <form
-              action="/search-by-category"
-              method="get"
-              className="d-inline"
-            >
->>>>>>> eeaf03624a3408033b9cbad4af9586fea923a90e
               <select
                 className="form-select"
                 name="categories_id"
@@ -199,31 +169,16 @@ const Product = () => {
                     <td>{item.soLuong}</td>
                     <td>{getCategoryName(item.categories_id)}</td>
                     <td>
-<<<<<<< HEAD
                       <div style={{ position: "relative", width: "100px", height: "100px" }}>
                         <img
                           className="image"
                           src={`/assets/img/${item.ImgURL}`}
                           alt="Hình ảnh sản phẩm"
                           style={{
-=======
-                      <div style={{ position: "relative", width: "100px" }}>
-                        <img
-                          className="image"
-                          src={`/assets/img/${item.ImgURL}`}
-                          style={{
-                            position: "absolute",
-                            top: "0",
-                            left: "0",
->>>>>>> eeaf03624a3408033b9cbad4af9586fea923a90e
                             width: "100%",
                             height: "100%",
                             objectFit: "cover",
                           }}
-<<<<<<< HEAD
-=======
-                          alt="Hình ảnh"
->>>>>>> eeaf03624a3408033b9cbad4af9586fea923a90e
                         />
                       </div>
                     </td>
@@ -284,11 +239,7 @@ const Product = () => {
                       />
                     </td>
                     <td>
-                      <a
-                        className="btn btn-primary"
-                        href={`/admin/productsForm/${item.id}`}
-                      >
-                        Chỉnh
+                      <a className="btn btn-primary" href={`/admin/productsForm/${item.id}`}>Chỉnh
                       </a>
                     </td>
                   </tr>
@@ -339,7 +290,7 @@ const Product = () => {
             </ul>
           </nav>
         </div>
-      </div>
+      
     </main>
   );
 };

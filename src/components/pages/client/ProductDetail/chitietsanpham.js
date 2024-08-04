@@ -6,11 +6,7 @@ const ProductDetail = ({ productID }) => {
       <form action="/user/chitiet" method="post" encType="multipart/form-data">
         <div className="row mt-3">
           <div className="col-5">
-<<<<<<< HEAD
           <img  className="card-img-top" alt="Example" />
-=======
-          <img className="card-img-top" alt="Example" />
->>>>>>> eeaf03624a3408033b9cbad4af9586fea923a90e
           </div>
           <div className="col-7">
             <h3></h3>
