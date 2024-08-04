@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
@@ -13,15 +14,22 @@ const Categories = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [alert, setAlert] = useState({ message: '', alertClass: '' });
+  const navigate = useNavigate();
+
+  // Fetch data function
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/categories?page=${currentPage}`);
+      setCategories(response.data);
+      setTotalPages(response.headers['x-total-pages']);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
   useEffect(() => {
-    // Fetch categories and set state
-    fetchCategories();
+    fetchData(); // Fetch data on initial load
   }, [currentPage]);
-
-  const fetchCategories = () => {
-    // Fetch categories data from API and setCategories, setTotalPages, etc.
-  };
 
   const handleFormChange = (e) => {
     const { name, value, files } = e.target;
@@ -31,20 +39,68 @@ const Categories = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Submit form data to server and handle response
+    const formData = new FormData();
+    formData.append('categories_name', categoryForm.categories_name);
+    formData.append('file', categoryForm.file);
+
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+
+    try {
+      if (categoryForm.id) {
+        // Update category
+        const response = await axios.put(`http://localhost:8080/api/categories/${categoryForm.id}`, formData, config);
+        console.log('Updated category:', response.data);
+        setAlert({
+          message: 'Cập nhật danh mục thành công',
+          alertClass: 'alert-success',
+        });
+      } else {
+        // Add new category
+        const response = await axios.post('http://localhost:8080/api/categories', formData, config);
+        console.log('Added category:', response.data);
+        setAlert({
+          message: 'Thêm danh mục mới thành công',
+          alertClass: 'alert-success',
+        });
+      }
+
+      // Clear form after submission
+      setCategoryForm({
+        id: '',
+        categories_name: '',
+        file: null,
+        image: null,
+      });
+
+      // Refresh categories list or update state as needed
+      fetchData();
+    } catch (error) {
+      console.error('Error:', error);
+      setAlert({
+        message: 'Có lỗi xảy ra. Vui lòng thử lại sau.',
+        alertClass: 'alert-danger',
+      });
+    }
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // Perform search with searchQuery
+    // Implement search logic
+    // This is placeholder, you need to define your own search logic
+  };
+
+  const handleEditCategory = (category) => {
+    navigate('/admin/categoriesForm', { state: { category } });
   };
 
   return (
-    <main className="container mt-5" style={{ height: '400px' }}>
-      <div>
-        <div className="main">
+    <main className="container mt-5">
           {alert.message && (
             <div className={`alert ${alert.alertClass}`} role="alert">
               <span>{alert.message}</span>
@@ -60,54 +116,7 @@ const Categories = () => {
                         <div className="position-absolute top-0 start-50 end-50" style={{ marginLeft: '-25vh' }}>
                           <h2 className="nd">Quản Lý Danh Mục</h2>
                         </div>
-                        <br /><br /><br />
-                        <form
-                          onSubmit={handleSubmit}
-                          style={{ marginLeft: '17vh' }}
-                          encType="multipart/form-data"
-                        >
-                          <input type="hidden" name="id" value={categoryForm.id} />
-                          <div className="col">
-                            <h3>Tên Danh Mục</h3>
-                            <input
-                              className="rounded"
-                              type="text"
-                              style={{ width: '60vh' }}
-                              name="categories_name"
-                              placeholder="Tên Danh Mục"
-                              value={categoryForm.categories_name}
-                              onChange={handleFormChange}
-                            />
-                            <br />
-                            <h3>Hình Ảnh</h3>
-                            <input
-                              className="rounded p-1"
-                              type="file"
-                              style={{ width: '60vh' }}
-                              name="file"
-                              multiple
-                              accept="image/*"
-                              onChange={handleFormChange}
-                            />
-                          </div>
-                          {categoryForm.image && (
-                            <div className="mb-3">
-                              <img
-                                src={`/images/${categoryForm.image}`}
-                                style={{ width: '100px', height: '100px' }}
-                                alt="category"
-                              />
-                            </div>
-                          )}
-                          <br />
-                          <div className="col d-inline mt-5">
-                            <button type="submit" className="btn btn-primary">
-                              {categoryForm.id ? 'Cập Nhật' : 'Thêm'}
-                            </button>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
+                          
                     <div className="col">
                       <form className="d-flex ms-auto" onSubmit={handleSearch}>
                         <div className="d-flex">
@@ -130,26 +139,31 @@ const Categories = () => {
                             <th>ID</th>
                             <th>Tên Danh Mục</th>
                             <th>Hình Ảnh</th>
+                            <th>Thao tác</th>
                           </tr>
                         </thead>
                         <tbody>
                           {categories.map((item) => (
                             <tr key={item.id}>
-                              <th>{item.id}</th>
+                              <td>{item.id}</td>
                               <td>{item.categories_name}</td>
                               <td>
-                                <img
-                                  src={`/images/${item.image}`}
-                                  className="img-thumbnail me-3"
-                                  alt="Product"
-                                  style={{ width: '150px', height: '150px' }}
-                                />
+                                {item.image && (
+                                  <img
+                                    src={`/images/${item.image}`}
+                                    className="img-thumbnail me-3"
+                                    alt="Product"
+                                    style={{ width: '150px', height: '150px' }}
+                                  />
+                                )}
                               </td>
                               <td>
-                                <a className="btn btn-2 btn-success" href={`/update-categoriesManager?id=${item.id}`}>
+                                <button
+                                  className="btn btn-2 btn-success"
+                                  onClick={() => handleEditCategory(item)}
+                                >
                                   Sửa
-                                </a>
-                                <br />
+                                </button>
                               </td>
                             </tr>
                           ))}
@@ -158,33 +172,30 @@ const Categories = () => {
                       <nav className="tohop" aria-label="Page navigation example">
                         <ul className="pagination">
                           <li className={`page-item ${currentPage === 0 ? 'disabled' : ''}`}>
-                            <a
+                            <button
                               className="page-link"
-                              href="#"
                               onClick={() => setCurrentPage(currentPage - 1)}
                             >
                               Previous
-                            </a>
+                            </button>
                           </li>
                           {[...Array(totalPages).keys()].map((i) => (
                             <li key={i} className={`page-item ${i === currentPage ? 'active' : ''}`}>
-                              <a
+                              <button
                                 className="page-link"
-                                href="#"
                                 onClick={() => setCurrentPage(i)}
                               >
                                 {i + 1}
-                              </a>
+                              </button>
                             </li>
                           ))}
                           <li className={`page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}`}>
-                            <a
+                            <button
                               className="page-link"
-                              href="#"
                               onClick={() => setCurrentPage(currentPage + 1)}
                             >
                               Next
-                            </a>
+                            </button>
                           </li>
                         </ul>
                       </nav>
@@ -198,6 +209,6 @@ const Categories = () => {
       </div>
     </main>
   );
-}
+};
 
 export default Categories;

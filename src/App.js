@@ -24,6 +24,8 @@ import ThongKeTongChiTieu from "./components/pages/Admin/statistics/totalnam";
 import Product from "./components/pages/Admin/products/product";
 import ProductFrom from "./components/pages/Admin/products/productForm";
 import Categoties from "./components/pages/Admin/categories/categories";
+import CategotiesForm from "./components/pages/Admin/categories/categoriesForm";
+
 
 function App() {
   return (
@@ -51,6 +53,8 @@ function App() {
               <Route path="productsForm" element={<ProductFrom />} />
               <Route path="productsForm/:id" element={<ProductFrom />} />
               <Route path="categories" element={<Categoties />} />
+              <Route path="categoriesForm" element={<CategotiesForm />} />
+              <Route path="categoriesForm/:id" element={<CategotiesForm />} />
               <Route path="statistics" element={<ThongKeTongChiTieu />} />
               <Route path="wherehouse" element={<Kho />} />
             </Route>
