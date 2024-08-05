@@ -101,7 +101,6 @@ const ProductForm = () => {
     const file = event.target.files[0];
     if (file) {
       setImagePreview(URL.createObjectURL(file));
-      // Additional logic for uploading the image should be added here
     }
   };
 
@@ -259,14 +258,6 @@ const ProductForm = () => {
                 sx={{ mt: 2 }}
               >
                 {id ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
-              </Button>
-              <Button
-                color="secondary"
-                variant="contained"
-                onClick={() => navigate("/admin/products")}
-                sx={{ ml: 2 }}
-              >
-                Trở về
               </Button>
             </Box>
           </form>

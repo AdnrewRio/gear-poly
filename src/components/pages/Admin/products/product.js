@@ -239,7 +239,7 @@ const Product = () => {
                       />
                     </td>
                     <td>
-                      <a className="btn btn-primary" href={`/admin/productsForm/${item.id}`}>Chỉnh
+                      <a className="btn btn-primary" href={`/admin/productsForm/${item.id}`}>Sửa
                       </a>
                     </td>
                   </tr>

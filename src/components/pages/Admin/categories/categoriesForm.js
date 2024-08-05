@@ -1,124 +1,117 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { Box, TextField, Button, Typography, Grid } from "@mui/material";
+import { Formik } from "formik";
+import * as yup from "yup";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CategoriesForm = () => {
-  const location = useLocation();
+  const { id } = useParams();
   const navigate = useNavigate();
-  const [categoryForm, setCategoryForm] = useState({
-    id: '',
-    categories_name: '',
-    file: null,
-    image: null,
+  const [initialValues, setInitialValues] = useState({
+    categories_name: "",
   });
-  const [alert, setAlert] = useState({ message: '', alertClass: '' });
 
   useEffect(() => {
-    if (location.state && location.state.category) {
-      setCategoryForm(location.state.category);
+    if (id) {
+      axios
+        .get(`http://localhost:8080/api/categories/${id}`)
+        .then((response) => {
+          const category = response.data;
+          setInitialValues({
+            categories_name: category.categories_name || "",
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching category data:", error);
+        });
     }
-  }, [location.state]);
+  }, [id]);
 
-  const handleFormChange = (e) => {
-    const { name, value, files } = e.target;
-    setCategoryForm({
-      ...categoryForm,
-      [name]: files ? files[0] : value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append('categories_name', categoryForm.categories_name);
-    formData.append('file', categoryForm.file);
-
-    const config = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    };
-
+  const handleFormSubmit = async (values) => {
     try {
-      if (categoryForm.id) {
-        // Update category
-        const response = await axios.put(`http://localhost:8080/api/categories/${categoryForm.id}`, formData, config);
-        console.log('Updated category:', response.data);
-        setAlert({
-          message: 'Cập nhật danh mục thành công',
-          alertClass: 'alert-success',
-        });
-      } else {
-        // Add new category
-        const response = await axios.post('http://localhost:8080/api/categories', formData, config);
-        console.log('Added category:', response.data);
-        setAlert({
-          message: 'Thêm danh mục mới thành công',
-          alertClass: 'alert-success',
-        });
-      }
+      const apiCall = id
+        ? axios.put(`http://localhost:8080/api/categories/${id}`, values)
+        : axios.post(`http://localhost:8080/api/categories`, values);
 
-      // Clear form after submission
-      setCategoryForm({
-        id: '',
-        categories_name: '',
-        file: null,
-        image: null,
-      });
-
-      // Redirect to categories list or update state as needed
-      navigate('/admin/categories');
+      await apiCall;
+      toast.success(id ? "Cập nhật danh mục thành công!" : "Thêm danh mục thành công!");
+      setTimeout(() => navigate("/admin/categories"), 1500);
     } catch (error) {
-      console.error('Error:', error);
-      setAlert({
-        message: 'Có lỗi xảy ra. Vui lòng thử lại sau.',
-        alertClass: 'alert-danger',
-      });
+      console.error("Request failed:", error.response || error.message || error);
+      toast.error(id ? "Cập nhật danh mục thất bại!" : "Thêm danh mục thất bại!");
     }
   };
 
   return (
-    <main className="container mt-5">
-      {alert.message && (
-        <div className={`alert ${alert.alertClass}`} role="alert">
-          <span>{alert.message}</span>
-        </div>
-      )}
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="categories_name" className="form-label">Tên Danh Mục</label>
-          <input
-            type="text"
-            className="form-control"
-            id="categories_name"
-            name="categories_name"
-            value={categoryForm.categories_name}
-            onChange={handleFormChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="file" className="form-label">Hình Ảnh</label>
-          <input
-            type="file"
-            className="form-control"
-            id="file"
-            name="file"
-            onChange={handleFormChange}
-          />
-          {categoryForm.image && (
-            <img
-              src={`/img/${categoryForm.image}`}
-              className="img-thumbnail mt-3"
-              alt="Product"
-              style={{ width: '150px', height: '150px' }}
-            />
-          )}
-        </div>
-        <button type="submit" className="btn btn-primary">Lưu</button>
-      </form>
-    </main>
+    <Box p="2%" m="20px">
+      <Typography variant="h4" mb="20px">
+        {id ? "Chỉnh sửa danh mục" : "Thêm danh mục"}
+      </Typography>
+
+      <Formik
+        onSubmit={handleFormSubmit}
+        initialValues={initialValues}
+        validationSchema={categorySchema}
+        enableReinitialize
+      >
+        {({
+          values,
+          errors,
+          touched,
+          handleBlur,
+          handleChange,
+          handleSubmit,
+        }) => (
+          <form onSubmit={handleSubmit}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Box display="grid" gap="20px">
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    label="Tên danh mục"
+                    name="categories_name"
+                    value={values.categories_name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.categories_name && !!errors.categories_name}
+                    helperText={touched.categories_name && errors.categories_name}
+                  />
+                </Box>
+              </Grid>
+            </Grid>
+            <Box display="flex" justifyContent="flex-end" mt="20px">
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ mt: 2, mr: 2 }}
+              >
+                {id ? "Cập nhật danh mục" : "Thêm danh mục"}
+              </Button>
+              <Button
+                color="secondary"
+                variant="contained"
+                onClick={() => navigate("/admin/categories")}
+                sx={{ mt: 2 }}
+              >
+                Trở về
+              </Button>
+            </Box>
+          </form>
+        )}
+      </Formik>
+
+      <ToastContainer />
+    </Box>
   );
 };
+
+const categorySchema = yup.object().shape({
+  categories_name: yup.string().required("Tên danh mục là bắt buộc"),
+});
 
 export default CategoriesForm;
