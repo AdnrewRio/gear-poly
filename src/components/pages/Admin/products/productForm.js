@@ -36,6 +36,8 @@ const ProductForm = () => {
 
   useEffect(() => {
     if (id) {
+      // const data = new FormData();
+      // data.append("product_name", ab)
       axios
         .get(`http://localhost:8080/api/products/${id}`)
         .then((response) => {
