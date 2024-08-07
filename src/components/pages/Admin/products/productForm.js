@@ -33,11 +33,10 @@ const ProductForm = () => {
   });
   const [categories, setCategories] = useState([]);
   const [imagePreview, setImagePreview] = useState("");
+  const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
     if (id) {
-      // const data = new FormData();
-      // data.append("product_name", ab)
       axios
         .get(`http://localhost:8080/api/products/${id}`)
         .then((response) => {
@@ -51,7 +50,7 @@ const ProductForm = () => {
             category: product.categories_id || "", // Ensure this matches the `name` used in `Select`
           });
 
-          setImagePreview(product.image ? `/assets/img/${product.image}` : "");
+          setImagePreview(product.imageEntity ? `/assets/img/${product.imageEntity}` : "");
         })
         .catch((error) => {
           console.error("Error fetching product data:", error);
@@ -68,32 +67,56 @@ const ProductForm = () => {
       });
   }, [id]);
 
-  const handleFormSubmit = (values) => {
+  const handleFormSubmit = async (values) => {
+    console.log(values);
+    console.log(imageFile);
+    
+    
     const formattedValues = {
       ...values,
       price: parseFloat(values.price),
       soLuong: parseInt(values.soLuong, 10),
       hien: values.hien === "true",
-      categories_id: values.category, // Ensure this matches the API's expected field
+      categories_id: values.category,
     };
-  
-    const apiCall = id
-      ? axios.put(`http://localhost:8080/api/products/${id}`, formattedValues)
-      : axios.post(`http://localhost:8080/api/products`, formattedValues);
-  
-    apiCall
-      .then(() => {
-        toast.success(id ? "Cập nhật sản phẩm thành công!" : "Thêm sản phẩm thành công!");
-        setTimeout(() => {
-          navigate("/admin/products");
-        }, 1500);
-      })
-      .catch((error) => {
-        console.error(id ? "Error updating product:" : "Error adding product:", error);
-        toast.error(id ? "Cập nhật sản phẩm thất bại!" : "Thêm sản phẩm thất bại!");
-      });
+
+    const data = new FormData();
+    data.append("product_name", formattedValues.product_name);
+    data.append("price", formattedValues.price);
+    data.append("soLuong", formattedValues.soLuong);
+    data.append("description", formattedValues.description);
+    data.append("hien", formattedValues.hien);
+    data.append("categories_id", formattedValues.categories_id);
+    data.append("image[0]", imageFile); // Append the image file here
+
+    console.log(data.values())
+    // const res = await axios.post("http://localhost:8080/api/products", data)
+
+    try {
+      const apiCall = id
+        ? axios.put(`http://localhost:8080/api/products/${id}`, data, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+        : axios.post(`http://localhost:8080/api/products`, data);
+      const response = await apiCall;
+      toast.success(
+        id ? "Cập nhật sản phẩm thành công!" : "Thêm sản phẩm thành công!"
+      );
+      setTimeout(() => {
+        navigate("/admin/products");
+      }, 1500);
+    } catch (error) {
+      console.error(
+        id ? "Error updating product:" : "Error adding product:",
+        error
+      );
+      toast.error(
+        id ? "Cập nhật sản phẩm thất bại!" : "Thêm sản phẩm thất bại!"
+      );
+    }
   };
-  
 
   const handleImageClick = () => {
     document.getElementById("imageInput").click();
@@ -103,6 +126,7 @@ const ProductForm = () => {
     const file = event.target.files[0];
     if (file) {
       setImagePreview(URL.createObjectURL(file));
+      setImageFile(file); // Set the image file in state
     }
   };
 
@@ -132,6 +156,7 @@ const ProductForm = () => {
                 <Box display="flex" flexDirection="column" alignItems="center">
                   <input
                     id="imageInput"
+                    name="image"
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}
