@@ -20,7 +20,7 @@ const Login = () => {
           <div className="col-lg-5 col-md-7 col-sm-9">
             <div className="login-container">
               <h1 className="text-center pb-2 login-title">
-                <a href="/index">Đăng nhập GearPoly</a>
+                <a href="/index">Đăng nhập</a>
               </h1>
               <form onSubmit={handleSubmit}>
                 <input type="hidden" name="path" value={path} onChange={(e) => setPath(e.target.value)} />

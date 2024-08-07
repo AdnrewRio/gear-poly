@@ -1,6 +1,8 @@
 import React from "react";
 import AdminNavbar from "./index";
+import "../../../css/footerAdmin.css";
 import { Outlet } from "react-router-dom";
+import FooterAdmin from "../../footer/admin";
 
 const AdminLayout = () => {
   return (
@@ -11,6 +13,7 @@ const AdminLayout = () => {
           <Outlet />
         </main>
       </div>
+      <FooterAdmin />
     </div>
   );
 };

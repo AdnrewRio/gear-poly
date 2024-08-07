@@ -17,10 +17,10 @@ const AdminNavbar = () => {
           <Nav.Link href="/admin/home" title="KHÁCH HÀNG">
             NGƯỜI DÙNG
           </Nav.Link>
-          <Nav.Link href="/admin/products" title="SẢN PHẨM">
+          <Nav.Link href="/admin/product" title="SẢN PHẨM">
             SẢN PHẨM
           </Nav.Link>
-          <Nav.Link href="/admin/categories" title="DANH MỤC">
+          <Nav.Link href="/admin/category" title="DANH MỤC">
             DANH MỤC
           </Nav.Link>
           <Nav.Link href="/admin/qldonhang" title="ĐƠN HÀNG">

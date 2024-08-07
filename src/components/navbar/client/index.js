@@ -1,4 +1,5 @@
 import React from "react";
+import GearPoly from "../../../images/LogoGearPoly.png";
 import { AiOutlineBell } from "react-icons/ai";
 import { CiShoppingCart } from "react-icons/ci";
 import { AiOutlineSearch } from "react-icons/ai";
@@ -11,6 +12,7 @@ const NavbarClient = () => {
           <a className="navbar-brand" href="/index">
             <img
               id="profileImage"
+              src={GearPoly}
               alt="Profile"
               className="rounded-circle"
               style={{ height: "110px", width: "110px", marginTop: "5px" }}

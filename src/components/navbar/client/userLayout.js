@@ -1,5 +1,6 @@
 import React from "react";
 import NavbarClient from "./index";
+import UserFooter from "../../footer/client/index";
 import { Outlet } from "react-router-dom";
 
 const UserLayout = () => {
@@ -11,6 +12,7 @@ const UserLayout = () => {
           <Outlet />
         </main>
       </div>
+      <UserFooter />
     </div>
   );
 };
