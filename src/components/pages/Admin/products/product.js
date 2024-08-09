@@ -9,11 +9,12 @@ const Product = () => {
   const [selectedCategory, setSelectedCategory] = useState("-1");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+  const [product_name, setProduct_Name] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log();
-
     const fetchData = async () => {
       try {
         const [productResponse, categoryResponse] = await Promise.all([
@@ -23,17 +24,6 @@ const Product = () => {
 
         console.log("Products:", productResponse.data); // Xem dữ liệu sản phẩm
         console.log("Categories:", categoryResponse.data); // Xem dữ liệu danh mục
-
-        // const dataWithProducts = productResponse.data.map((product) => ({
-        //   id: product.id,
-        //   product_name: product.product_name,
-        //   price: product.price,
-        //   soLuong: product.soLuong,
-        //   description: product.description,
-        //   hien: product.hien,
-        //   ImgURL: product.imageEntity,
-        //   categories_id: product.categories_id,
-        // }));
         setProducts(productResponse?.data);
         setCategories(categoryResponse.data);
       } catch (error) {
@@ -89,30 +79,33 @@ const Product = () => {
   return (
     <main className="container mt-5">
       <div className=" mb-4">
-        <form className="d-flex mb-4" action="/searchProd" method="get">
-          <input
-            className="form-control me-2"
-            type="search"
-            placeholder="Tìm kiếm theo tên"
-            name="product_name"
-          />
-          <input
-            className="form-control me-2"
-            type="number"
-            placeholder="Giá thấp nhất"
-            name="minPrice"
-            min="0"
-          />
-          <input
-            className="form-control me-2"
-            type="number"
-            placeholder="Giá cao nhất"
-            name="maxPrice"
-            min="0"
-          />
-          <button className="btn btn-outline-success" type="submit">
-            Tìm
-          </button>
+      <form className="d-flex mb-4" onSubmit={handleSubmit}>
+            <input
+                className="form-control me-2"
+                type="search"
+                placeholder="Tìm kiếm theo tên"
+                value={product_name}
+                onChange={(e) => setProduct_Name(e.target.value)}
+            />
+            <input
+                className="form-control me-2"
+                type="number"
+                placeholder="Giá thấp nhất"
+                value={minPrice}
+                onChange={(e) => setMinPrice(e.target.value)}
+                min="0"
+            />
+            <input
+                className="form-control me-2"
+                type="number"
+                placeholder="Giá cao nhất"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+                min="0"
+            />
+            <button className="btn btn-outline-success" type="submit">
+                Tìm
+            </button>
         </form>
         <div className="mb-3">
           <a className="btn btn-success me-2" onClick={handleAddClick}>
@@ -146,7 +139,6 @@ const Product = () => {
           <table className="table table-hover table-sm">
             <thead>
               <tr>
-                <th>Mã</th>
                 <th>Tên</th>
                 <th>Giá</th>
                 <th>Số Lượng</th>
@@ -160,7 +152,6 @@ const Product = () => {
             <tbody>
               {products.map((item) => (
                 <tr key={item.id}>
-                  <td>{item.id}</td>
                   <td>{item.product_name}</td>
                   <td>
                     {item.price.toLocaleString("vi-VN", {
@@ -183,7 +174,7 @@ const Product = () => {
                           <img
                             className="image"
                             src={`http://localhost:8080/images/${item.imageEntity[0].name}`}
-                            alt="Hình ảnh sản phẩm"
+                            alt="Hình ảnh không hiển thị"
                             style={{
                               width: "100%",
                               height: "100%",

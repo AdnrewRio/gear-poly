@@ -4,15 +4,16 @@ import {
   TextField,
   Button,
   Typography,
-  Avatar,
-  Radio,
-  RadioGroup,
-  FormControl,
-  FormControlLabel,
+  IconButton,
   Grid,
   Select,
   MenuItem,
+  FormControl,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useParams, useNavigate } from "react-router-dom";
@@ -28,12 +29,13 @@ const ProductForm = () => {
     price: "",
     soLuong: "",
     description: "",
-    hien: true,
+    hien: "true", // Khởi tạo giá trị boolean dưới dạng chuỗi
     categories_id: "",
   });
   const [categories, setCategories] = useState([]);
-  const [imagePreview, setImagePreview] = useState("");
-  const [imageFile, setImageFile] = useState(null);
+  const [imagePreviews, setImagePreviews] = useState([]);
+  const [imageFiles, setImageFiles] = useState([]);
+  const [imagesToDelete, setImagesToDelete] = useState([]);
 
   useEffect(() => {
     if (id) {
@@ -46,11 +48,20 @@ const ProductForm = () => {
             price: product.price || "",
             soLuong: product.soLuong || "",
             description: product.description || "",
-            hien: product.hien || true,
-            category: product.categories_id || "", // Ensure this matches the `name` used in `Select`
+            hien: product.hien === 0 ? "true" : "false", // Chuyển đổi từ số thành chuỗi boolean
+            categories_id: product.categories_id || "",
           });
 
-          setImagePreview(product.imageEntity ? `/assets/img/${product.imageEntity}` : "");
+          setImagePreviews(
+            product.imageEntity
+              ? product.imageEntity.map(
+                  (img) => ({
+                    url: `http://localhost:8080/images/${img.name}`,
+                    id: img.id,
+                  })
+                )
+              : []
+          );
         })
         .catch((error) => {
           console.error("Error fetching product data:", error);
@@ -68,16 +79,12 @@ const ProductForm = () => {
   }, [id]);
 
   const handleFormSubmit = async (values) => {
-    console.log(values);
-    console.log(imageFile);
-    
-    
     const formattedValues = {
       ...values,
       price: parseFloat(values.price),
       soLuong: parseInt(values.soLuong, 10),
-      hien: values.hien === "true",
-      categories_id: values.category,
+      hien: values.hien === "true" ? 0 : 1, // Chuyển đổi từ chuỗi boolean thành số
+      categories_id: values.categories_id,
     };
 
     const data = new FormData();
@@ -85,20 +92,18 @@ const ProductForm = () => {
     data.append("price", formattedValues.price);
     data.append("soLuong", formattedValues.soLuong);
     data.append("description", formattedValues.description);
-    data.append("hien", formattedValues.hien);
+    data.append("hien", formattedValues.hien); // Gửi giá trị hien dưới dạng số
     data.append("categories_id", formattedValues.categories_id);
-    data.append("image[0]", imageFile); // Append the image file here
 
-    console.log(data.values())
-    // const res = await axios.post("http://localhost:8080/api/products", data)
+    if (imageFiles.length > 0) {
+      imageFiles.forEach((file) => {
+        data.append("images", file);
+      });
+    }
 
     try {
       const apiCall = id
-        ? axios.put(`http://localhost:8080/api/products/${id}`, data, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          })
+        ? axios.put(`http://localhost:8080/api/products/${id}`, data)
         : axios.post(`http://localhost:8080/api/products`, data);
       const response = await apiCall;
       toast.success(
@@ -123,15 +128,36 @@ const ProductForm = () => {
   };
 
   const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setImagePreview(URL.createObjectURL(file));
-      setImageFile(file); // Set the image file in state
+    const newFiles = Array.from(event.target.files);
+
+    setImageFiles((prevFiles) => [...prevFiles, ...newFiles]);
+
+    setImagePreviews((prevPreviews) => [
+      ...prevPreviews,
+      ...newFiles.map((file) => ({
+        url: URL.createObjectURL(file),
+        id: Date.now(), // Temporary ID for client-side only
+      })),
+    ]);
+  };
+
+  const handleImageDelete = async (index) => {
+    const imageToDelete = imagePreviews[index];
+    
+    if (imageToDelete.id) {
+      try {
+        await axios.delete(`http://localhost:8080/api/products/images/${imageToDelete.id}`);
+        setImagePreviews((prevPreviews) =>
+          prevPreviews.filter((_, i) => i !== index)
+        );
+      } catch (error) {
+        console.error("Error deleting image:", error);
+      }
     }
   };
 
   return (
-    <Box p="2%" m="20px">
+    <Box p="2%" m="20px" maxWidth="800px" mx="auto">
       <Typography variant="h4" mb="20px">
         {id ? "Chỉnh sửa sản phẩm" : "Thêm sản phẩm"}
       </Typography>
@@ -156,26 +182,51 @@ const ProductForm = () => {
                 <Box display="flex" flexDirection="column" alignItems="center">
                   <input
                     id="imageInput"
-                    name="image"
+                    name="images"
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}
                     style={{ display: "none" }}
+                    multiple
                   />
-                  <Avatar
-                    src={imagePreview}
-                    alt="Product"
-                    sx={{
-                      width: 100,
-                      height: 100,
-                      marginBottom: "8px",
-                      cursor: "pointer",
-                    }}
-                    onClick={handleImageClick}
-                  />
-                  <Typography variant="body1" align="center">
-                    Ấn để thay đổi
-                  </Typography>
+                  <Box display="flex" flexWrap="wrap" gap="10px">
+                    {imagePreviews.map((preview, index) => (
+                      <Box
+                        key={index}
+                        position="relative"
+                        width={100}
+                        height={100}
+                      >
+                        <Box
+                          component="img"
+                          src={preview.url}
+                          alt={`Product ${index}`}
+                          sx={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            marginBottom: "8px",
+                            cursor: "pointer",
+                          }}
+                          onClick={handleImageClick}
+                        />
+                        <IconButton
+                          onClick={() => handleImageDelete(index)}
+                          sx={{
+                            position: "absolute",
+                            top: 0,
+                            right: 0,
+                            backgroundColor: "rgba(255, 255, 255, 0.8)",
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Box>
+                    ))}
+                    <Button variant="contained" onClick={handleImageClick}>
+                      Thêm ảnh
+                    </Button>
+                  </Box>
                 </Box>
               </Grid>
 
@@ -227,70 +278,48 @@ const ProductForm = () => {
                     value={values.description}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    error={touched.description && !!errors.description}
-                    helperText={touched.description && errors.description}
                   />
 
                   <FormControl fullWidth>
                     <Select
-                      value={values.category || ""}
+                      value={values.categories_id || ""}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      name="category"
+                      name="categories_id"
                       displayEmpty
-                      error={touched.category && !!errors.category}
+                      inputProps={{ "aria-label": "Select Category" }}
                     >
                       <MenuItem value="" disabled>
-                        Chọn loại sản phẩm
+                        Chọn danh mục
                       </MenuItem>
-                      {categories.length > 0 ? (
-                        categories.map((category) => (
-                          <MenuItem key={category.id} value={category.id}>
-                            {category.categories_name}
-                          </MenuItem>
-                        ))
-                      ) : (
-                        <MenuItem disabled>Không có loại sản phẩm nào</MenuItem>
-                      )}
+                      {categories.map((category) => (
+                        <MenuItem key={category.id} value={category.id}>
+                          {category.categories_name}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </FormControl>
 
-                  <FormControl component="fieldset" sx={{ mb: 2 }}>
+                  <FormControl fullWidth>
                     <RadioGroup
-                      row
                       name="hien"
                       value={values.hien}
                       onChange={handleChange}
                     >
-                      <FormControlLabel
-                        value="false"
-                        control={<Radio />}
-                        label="Ẩn"
-                      />
-                      <FormControlLabel
-                        value="true"
-                        control={<Radio />}
-                        label="Hiện"
-                      />
+                      <FormControlLabel value="true" control={<Radio />} label="Hiện" />
+                      <FormControlLabel value="false" control={<Radio />} label="Ẩn" />
                     </RadioGroup>
                   </FormControl>
+
+                  <Button type="submit" variant="contained" color="primary">
+                    {id ? "Cập nhật" : "Thêm"}
+                  </Button>
                 </Box>
               </Grid>
             </Grid>
-            <Box display="flex" justifyContent="end" mt="20px">
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                sx={{ mt: 2 }}
-              >
-                {id ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
-              </Button>
-            </Box>
           </form>
         )}
       </Formik>
-
       <ToastContainer />
     </Box>
   );
@@ -298,17 +327,9 @@ const ProductForm = () => {
 
 const productSchema = yup.object().shape({
   product_name: yup.string().required("Tên sản phẩm là bắt buộc"),
-  price: yup
-    .number()
-    .required("Giá là bắt buộc")
-    .positive("Giá phải là số dương"),
-  soLuong: yup
-    .number()
-    .required("Số lượng là bắt buộc")
-    .integer("Số lượng phải là số nguyên"),
+  price: yup.number().required("Giá là bắt buộc").positive("Giá phải là số dương"),
+  soLuong: yup.number().required("Số lượng là bắt buộc").positive("Số lượng phải là số dương"),
   description: yup.string(),
-  hien: yup.boolean().required("Trạng thái là bắt buộc"),
-  category: yup.string().required("Danh mục là bắt buộc"),
 });
 
 export default ProductForm;
